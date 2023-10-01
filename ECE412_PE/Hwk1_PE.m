@@ -21,9 +21,11 @@ vs_hat = N*vp_hat;
 
 te = 1/w*sqrt(2*(1-28/vs_hat));
 Rs = 4*te*(vs_hat-Vo-2*vd)/Ts/Io;
-
+Io = 4*te*(vs_hat - vdce)/Rs/Ts;
 C_min = Io*(Ts/2-2*te)/0.05/Vo;
 
+R = 0.9;
+Rs_2 = 4/sqrt(2)/pi*(vdce)/R/Io*(1-R)^(3/2)
 %%%% Q2
 %%%%%% vs
 Tss = 1e-4;
