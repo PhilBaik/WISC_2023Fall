@@ -62,8 +62,31 @@ vd1(is<0)=-27;
 ic_rect = id_rect - Io;
 
 %%%%%% Load
-io = 26*ones(size(tt));
+io = 1/2*ones(size(tt));
 
+%% Q3
+%%%%% a)
+is_peak = max(is_rect);
+Is_RMS = sqrt(2/Ts*(is_peak^2)*2*te);
+
+Is1 = 2*sqrt(2)*is_peak/pi*sin(2*pi/Ts*te);
+THD_F = sqrt(Is_RMS^2-Is1^2)/Is1;
+
+%%%%% d)
+Vs_RMS = vs_hat/sqrt(2)
+Ss = Vs_RMS*Is_RMS;
+Ps = 4*vs_hat*is_peak*sin(w*te)/2/pi;
+PFs = Ps/Ss
+
+%%%%% e)
+ic_ppeak = max(ic_rect);
+ic_npeak = min(ic_rect);
+Ic_RMS = sqrt(1/(Ts/2)*(2*te*ic_ppeak^2-(Ts/2-2*te)*ic_npeak^2))
+
+%%%%% f)
+id_peak = max(id_rect)
+id_npeak = min(id_rect);
+Id_ave = 2/Ts*te*id_peak
 %% plotting
 close all;
 figure_size = [500 300]
