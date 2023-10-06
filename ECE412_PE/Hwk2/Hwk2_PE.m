@@ -19,7 +19,7 @@ tvf = 30e-9;
 tvr = 35e-9;
 tcf = 15e-9;
 
-Woff = 1/2*(Vin+VF)*Io*(tcf+tvf)
+Woff = 1/2*(Vin+VF)*Io*(tcf+tvr)
 Won = 1/2*(Vin+VF)*Io*(tcr+tvf)
 Rds_on = 0.18
 
