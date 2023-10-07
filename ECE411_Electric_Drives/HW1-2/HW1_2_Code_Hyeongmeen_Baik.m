@@ -193,3 +193,57 @@ ylabel('Tau [N*m]')
 xlabel('K')
 
 %% Q2
+clc;
+clear;
+close all;
+
+%%%%% #1 284 3500rpm #2 503 500rpm
+
+hp = 50;
+n1 = 3500;
+n2 = 500;
+w1 = n1*0.10472;
+w2 = n2*0.10472;
+R1 = 0.142;
+Ra_hot1 = R1*1.2;
+L1 = 0.0011;
+K1 = 0.59;
+Wf1 = 160;
+Jm1 = 0.065;
+
+R2 = 0.168;
+Ra_hot2 = R2*1.2;
+L2 = 0.013;
+K2 = 4.35;
+Jm2 = 1.34;
+Wf2 = 325;
+
+%%%%% I/Vin or w/Vin -> 
+% The type of transfer function does not impact eigenvalues
+% Ljs^2 + (J*R+L*B)s + (K^2 + R*B) = 0
+% OR
+% didt = (v -Ri - Kw)/L
+% dwdt = (Ki-T_L - Bw)/J
+% But T_L is 0, B is 0
+% [didt ; dwdt] = [-R/L -K/L;K/J 0][i;w] + [1/L;0]v
+
+A1_100 = [-Ra_hot1/L1, -K1/L1; K1/Jm1, 0];
+A2_100 = [-Ra_hot2/L2, -K2/L2; K2/Jm2, 0];
+
+eig_A1_100=eig(A1_100);
+eig_A2_100=eig(A2_100);
+
+A1_50 = [-Ra_hot1/L1, -K1/L1/2; K1/2/Jm1, 0];
+A2_50 = [-Ra_hot2/L2, -K2/L2/2; K2/2/Jm2, 0];
+
+eig_A1_50=eig(A1_50);
+eig_A2_50=eig(A2_50);
+
+fprintf('rated (100) 3500 \n')
+disp(eig_A1_100)
+fprintf('rated (100) 500 \n')
+disp(eig_A2_100)
+fprintf('50 3500 \n')
+disp(eig_A1_50)
+fprintf('50 500 \n')
+disp(eig_A2_50)
