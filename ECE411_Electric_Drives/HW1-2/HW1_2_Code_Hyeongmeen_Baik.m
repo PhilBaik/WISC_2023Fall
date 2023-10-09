@@ -247,3 +247,110 @@ fprintf('50 3500 \n')
 disp(eig_A1_50)
 fprintf('50 500 \n')
 disp(eig_A2_50)
+
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                     University of Wisconsin-Madison                     %
+%                 ECE 411 Introduction to Electric Drives                 %
+%                          Homework #1-2 Simulink Script Runner           %
+%                          Author: Thomas Nguyen
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Setup
+% close all;
+% clear;
+% clc;
+
+
+%%%%%%%%%%%% TODO: REPLACE EIGENVALUES HERE %%%%%%%%%%%%%%
+p1_fullFlux = eig_A2_100(1,1);      % Eigenvalues for DC machine at 100% rated flux
+p2_fullFlux = eig_A2_100(2,1);
+p1_halfFlux = eig_A2_50(1,1);    % Eigenvalues for DC machine at 50% rated flux
+p2_halfFlux = eig_A2_50(2,1);
+%%%%%%%% END TODO: REPLACE EIGENVALUES HERE %%%%%%%%%%%%%%
+
+wn_fullFlux = sqrt(p1_fullFlux*p2_fullFlux)
+wn_halfFlux = sqrt(p1_halfFlux*p2_halfFlux)
+damping_coefficient_fullFlux = -(p1_fullFlux+p2_fullFlux)/2/wn_fullFlux
+damping_coefficient_halfFlux = -(p1_halfFlux+p2_halfFlux)/2/wn_halfFlux
+%% Parameter setup
+% DC machine Parameters
+% Based off a 20hp, 500 rpm DC machine 
+Kp_run01 = 4.35;           % machine constant
+                           %   (100% rated flux)
+Kp_run02 = 0.5*Kp_run01;   % field-weakened machine constant  
+                           %   (50% rated flux)
+pm_Rp = 1.2*0.168;         % [Ohms] Hot resistance
+pm_Lp = 0.013;           % [H] DC machine inductance
+pm_Jp = 1.34*1.355;       % [kg*m^2] Moment of inertia
+pm_bp = 1e-4;       % [N*m/(rad/s)] Damping coefficient
+pm_Ke = Kp_run01;   % [V/(rad/s)] machine constant (BEMF)
+pm_Kt = Kp_run01;   % [N*m/A] machine constant (torque)
+
+% Inputs to DC machine 
+% (in control theory, the DC machine is known as a "plant" or "process")
+Vstep = 5;
+
+% Simulink run parameters
+T_duration = 1; % [s] Simulation time 
+Ts_sim = 1e-6;  % [s] Sample time
+
+
+%% RUN #1 in Simulink: Original Parameters
+simParam.StartTime = '0';
+simParam.StopTime = num2str(T_duration);
+simOut = sim('HW_02_DC_Machine_Sim.slx', simParam);
+t_sim = simOut.Omega.time';
+Omega_sim_run01 = simOut.Omega.data';
+
+
+%% RUN #2 in Simulink: Field-Weakened Machine
+pm_Ke = Kp_run02;   % [V/(rad/s)] machine constant (BEMF)
+pm_Kt = Kp_run02;   % [N*m/A] machine constant (torque)
+simOut = sim('HW_02_DC_Machine_Sim.slx', simParam);
+Omega_sim_run02 = simOut.Omega.data';
+
+
+%% Plotting
+% Eigenvalue plotting
+sigma_fullFlux = [real(p1_fullFlux) real(p2_fullFlux)];
+omega_d_fullFlux = [imag(p1_fullFlux) imag(p2_fullFlux)];
+sigma_halfFlux = [real(p1_halfFlux) real(p2_halfFlux)];
+omega_d_halfFlux = [imag(p1_halfFlux) imag(p2_halfFlux)];
+
+figure(31);
+plot(sigma_fullFlux, omega_d_fullFlux, ...
+    'DisplayName', 'Rated (100%%) Flux', ...
+    'Marker','x', 'LineStyle','none'); hold on;
+plot(sigma_halfFlux, omega_d_halfFlux, ...
+    'DisplayName', '50%% of Rated Flux', ...
+    'Marker','x', 'LineStyle','none');
+title('Eigenvalues of DC Machine', 'Interpreter', 'Latex')
+legend('Location','SouthOutside', 'NumColumns', 2); grid on;
+xlim([-50 50])
+ylim([-50 50])
+ylabel('Im[p]')
+xlabel('Re[p]')
+grid on;
+r = 1;
+x = 0;
+y = 0;
+th = 0:pi/50:2*pi;
+xunit = r * cos(th) + x;
+yunit = r * sin(th) + y;
+plot(xunit, yunit);
+hold off
+
+% Simulink plotting
+figure;
+lgnd_txt = sprintf('Rated (100%%) Flux');
+plot(t_sim, Omega_sim_run01, 'DisplayName', lgnd_txt, 'LineWidth', 0.5)
+hold on;
+lgnd_txt = sprintf('50%% of Rated Flux');
+plot(t_sim, Omega_sim_run02, 'DisplayName', lgnd_txt, 'LineWidth', 0.5)
+hold off;
+title('$\Omega$ response to 5V Step', 'Interpreter', 'Latex')
+subtitle('20hp, 500rpm DC Machine Plant, no Initial Conditions')
+legend('Location','SouthOutside', 'NumColumns', 2); grid on;
+ylabel('Velocity [m/s]')
+xlabel('Time [s]')
