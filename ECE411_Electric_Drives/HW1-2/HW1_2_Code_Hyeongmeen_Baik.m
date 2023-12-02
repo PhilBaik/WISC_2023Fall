@@ -141,6 +141,7 @@ KK = linspace(0,K,100000);
 %%%% n = 3500rpm
 Tau11_1c = KK*Vin_max_1c/Ra_hot -(KK.^2)*wmax_1c/Ra_hot;
 Tau12_1c = KK*Vin_min_1c/Ra_hot -(KK.^2)*wmax_1c/Ra_hot;
+Tau11_1c_max = KK*I1b_max;
 
 [Tau1max_1c I11] = max(Tau11_1c);
 K11 = KK(1,I11);
@@ -168,12 +169,14 @@ fprintf('3500rpm\n')
 fprintf('positive %.3f %.3f %.3f %.3f\n',Tau1max_1c,K11,Pout1_pos_1c,Vin_max_1c)
 fprintf('negative %.3f %.3f %.3f %.3f\n',Tau1min_1c,K12,Pout1_neg_1c,Vin_min_1c)
 
+
 fprintf('-3500rpm\n')
 fprintf('positive %.3f %.3f %.3f %.3f\n',Tau2max_1c,K21,Pout2_pos_1c,Vin_max_1c)
 fprintf('negative %.3f %.3f %.3f %.3f\n',Tau2min_1c,K22,Pout2_neg_1c,Vin_min_1c)
 
 figure(13)
 plot(KK,Tau11_1c,'DisplayName','Vin = 100, w = 3500rpm')
+plot(KK,Tau11_1c_max,'DisplayName','Tau max, w = 3500rpm')
 title('Q1.C) 3500 rpm')
 hold on;
 plot(KK,Tau12_1c,'DisplayName','Vin = -100, w = 3500rpm')
@@ -210,12 +213,14 @@ L1 = 0.0011;
 K1 = 0.59;
 Wf1 = 160;
 Jm1 = 0.065;
+Jm1 = 1.355*Jm1;
 
 R2 = 0.168;
 Ra_hot2 = R2*1.2;
 L2 = 0.013;
 K2 = 4.35;
 Jm2 = 1.34;
+Jm2 = 1.355*Jm2;
 Wf2 = 325;
 
 %%%%% I/Vin or w/Vin -> 
