@@ -20,8 +20,8 @@ lambda_f_est = 1.0*lambda_f;  % Set this to slightly higher or lower than 1.0 to
 % w_kpI = ;      % BW of the proprotional regulator
 % w_kiI ;      % Freq where Kp and Ki/s cross over each other
 
-% Kp_ireg = ;  % qd current regulator proportional gain
-% Ki_ireg =     % qd current regulator intergator gain
+Kp_ireg = 0.1416;  % qd current regulator proportional gain
+Ki_ireg = 141.6    % qd current regulator intergator gain
 
 Vdc = 72;             % Nominal Vdc level
 Kp_wreg = Jm*30;
@@ -36,3 +36,5 @@ Te_test_part4a = -15;
 w_test_Part4a_RPM = 3000;  % 1000 RPM also
 
 v_wind_ramp_m_per_s_per_s = 0.5;    % 16 sec to increase up to 8 m/s
+
+
